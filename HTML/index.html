@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estructurador de Imagen — Grupo Entel</title>
+  <link rel="icon" type="image/svg+xml" href="./logos/logo-entel.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] } } }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Hojas de Estilo Separadas por Función -->
+  <link rel="stylesheet" href="./estilos/base.css" />
+  <link rel="stylesheet" href="./estilos/componentes.css" />
+  <link rel="stylesheet" href="./estilos/galeria-estilos.css" />
+</head>
+<body class="bg-[#FAF9F6] text-slate-900 flex flex-col h-screen w-screen overflow-hidden">
+
+  <!-- Top Header + 8-Step Numbered Stepper -->
+  <header class="relative z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 px-3 sm:px-6 py-2.5 shrink-0">
+    <div class="max-w-7xl mx-auto flex flex-col gap-2.5">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <img src="./logos/logo-entel.svg" alt="Logo Estructurador" class="w-9 h-9 rounded-2xl shadow-sm shrink-0" />
+          <div class="leading-tight">
+            <div class="text-sm sm:text-base font-extrabold tracking-tight text-slate-900">Estructurador de Imagen · Grupo Entel</div>
+            <div class="text-[11px] font-semibold text-indigo-600">Estudio interactivo paso a paso (Texto a Imagen)</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button id="btnPreset0" type="button" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 text-slate-700 hover:bg-stone-200 active:scale-95 transition">
+            <i data-lucide="circle-dot" class="w-3.5 h-3.5 text-slate-500"></i><span class="hidden sm:inline">Paso 0</span>
+          </button>
+          <button id="btnPresetDoc" type="button" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 active:scale-95 transition">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Ejemplo</span>
+          </button>
+          <button id="btnResetTop" type="button" title="Reiniciar todo" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-95 transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Reiniciar</span>
+          </button>
+          <button id="btnFull" type="button" title="Pantalla completa" class="p-2 rounded-xl text-slate-600 hover:bg-stone-100 active:scale-95 transition">
+            <i data-lucide="maximize" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 8 Numbered Steps: 1 Tamaño -> 2 Personaje -> 3 Emoción y Postura -> 4 Escenario -> 5 Cámara -> 6 Iluminación -> 7 Estilos -> 8 Texto -->
+      <nav id="stepperNav" class="flex items-center justify-between gap-1 sm:gap-1.5 overflow-x-auto custom-scroll pb-0.5"></nav>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 overflow-y-auto custom-scroll">
+    <div class="max-w-7xl mx-auto p-3 sm:p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <!-- Left Builder -->
+        <section id="builderSection" class="lg:col-span-7 space-y-4"></section>
+
+        <!-- Right Interactive 3D Stage -->
+        <aside id="studioAside" class="lg:col-span-5 lg:sticky lg:top-4">
+          <div class="bg-white rounded-3xl border border-stone-200 shadow-lg overflow-hidden">
+            <div class="px-4 py-2.5 border-b border-stone-100 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span id="stageTitleLabel" class="text-xs font-extrabold uppercase tracking-wider text-slate-600 truncate">Simulador Visual 3D</span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <div id="lightStageModeSwitch" class="hidden items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+                  <button type="button" data-light-stage-mode="photo" class="light-stage-mode-btn px-2 py-0.5 rounded-md text-[10px] font-extrabold transition bg-white text-orange-700 shadow-xs">Imagen</button>
+                  <button type="button" data-light-stage-mode="3d" class="light-stage-mode-btn px-2 py-0.5 rounded-md text-[10px] font-extrabold transition text-slate-500 hover:text-slate-800">3D</button>
+                </div>
+                <span id="hudBadge" class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-extrabold">Paso 1 · Tamaño</span>
+              </div>
+            </div>
+
+            <div class="p-4 bg-stone-100 flex items-center justify-center min-h-[280px] sm:min-h-[320px]">
+              <div id="aspectShell" class="relative w-full max-w-full rounded-2xl overflow-hidden shadow-inner border-2 border-stone-300 bg-white transition-all duration-300" style="aspect-ratio: 16 / 9; max-height: 295px;">
+                <div id="threeContainer" class="w-full h-full"></div>
+
+                <!-- Simulador de Iluminación y Atmósfera sobre Imagen Real (Paso 6) -->
+                <div id="lightingPhotoStage" class="hidden absolute inset-0 overflow-hidden bg-slate-950">
+                  <img id="lightingBaseImg" src="./imagenes/luz-base-escena.jpg" alt="Escena base de simulación de iluminación" class="w-full h-full object-cover transition-all duration-500" />
+                  <div id="lpLightStack" class="pointer-events-none absolute inset-0"></div>
+                  <div id="lpTempOverlay" class="pointer-events-none absolute inset-0 transition-all duration-500"></div>
+                  <div id="lpAtmStack" class="pointer-events-none absolute inset-0"></div>
+                  <div id="lpParticlesOverlay" class="pointer-events-none absolute inset-0 overflow-hidden"></div>
+                  <div id="lpVignetteOverlay" class="pointer-events-none absolute inset-0 transition-all duration-500"></div>
+                  <div id="lpActiveSummary" class="pointer-events-none absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-1 z-10"></div>
+                </div>
+
+                <div id="emptyCanvasHint" class="hidden pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-white/95 text-slate-400">
+                  <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-indigo-300 flex items-center justify-center mb-2 text-indigo-500 font-black text-base shrink-0" id="emptyRatioText">16:9</div>
+                  <span class="text-[11px] font-bold text-slate-500 leading-snug max-w-[140px] sm:max-w-[200px]">Lienzo listo.<br/>Avanza al Paso 2.</span>
+                </div>
+                <div id="dragLayer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                <div id="hairPreviewOverlay" class="hidden pointer-events-none absolute top-2.5 right-2.5 z-10 bg-white/95 backdrop-blur-sm border border-indigo-200 rounded-2xl p-1.5 shadow-md w-20 sm:w-24 text-center">
+                  <img id="hairPreviewImg" src="" alt="Referencia de cabello" class="w-full aspect-square object-cover rounded-xl bg-stone-100" />
+                  <div id="hairPreviewLabel" class="text-[10px] font-extrabold text-indigo-700 mt-1 truncate">Cabello</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-4 py-2 bg-stone-50 border-t border-stone-100 text-[11px] font-semibold text-slate-500 flex items-center justify-between gap-2">
+              <span id="dragHintText" class="truncate">Selecciona la proporción del lienzo</span>
+              <span id="ratioLabel" class="font-extrabold text-indigo-600 shrink-0">16:9</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Fixed Bottom Color-Coded Prompt Bar -->
+  <footer class="relative z-30 bg-white/95 backdrop-blur-md border-t border-stone-200 px-3 sm:px-6 py-3 shrink-0 shadow-[0_-6px_24px_rgba(15,23,42,0.06)]">
+    <div class="max-w-7xl mx-auto flex flex-col gap-2">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider">
+          <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">Personaje</span>
+          <span class="px-2 py-0.5 rounded bg-cyan-100 text-cyan-800">Emoción y Postura</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Escenario</span>
+          <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800">Cámara</span>
+          <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700">Iluminación</span>
+          <span class="px-2 py-0.5 rounded bg-violet-100 text-violet-700">Estilo</span>
+          <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700">Texto</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button id="btnPrevStep" type="button" title="Paso anterior" class="p-2 rounded-xl bg-stone-100 text-slate-700 hover:bg-stone-200 active:scale-95 transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+          <button id="btnNextStep" type="button" title="Siguiente paso" class="p-2 rounded-xl bg-stone-100 text-slate-700 hover:bg-stone-200 active:scale-95 transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+          <button id="btnReset" type="button" title="Reiniciar" class="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-95 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          <button id="btnCopyPrompt" type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shadow-sm transition active:scale-95">
+            <i data-lucide="copy" class="w-4 h-4"></i><span>Copiar Prompt</span>
+          </button>
+        </div>
+      </div>
+      <div id="promptPreview" class="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 text-xs sm:text-sm leading-relaxed min-h-[100px] max-h-48 sm:min-h-[112px] sm:max-h-52 overflow-y-auto custom-scroll break-words"></div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="pointer-events-none fixed top-20 left-1/2 -translate-x-1/2 z-50 opacity-0 -translate-y-3 transition-all duration-300 flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-bold shadow-xl">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Prompt copiado</span>
+  </div>
+
+  <!-- Style Image Lightbox Modal -->
+  <div id="styleLightbox" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-stone-200">
+      <div class="flex items-center justify-between gap-2 px-5 py-3 border-b border-stone-100">
+        <div class="min-w-0">
+          <div id="lightboxTitle" class="text-sm sm:text-base font-extrabold text-slate-900 truncate">Estilo visual</div>
+          <div id="lightboxCat" class="text-[11px] font-bold text-violet-600">Categoría</div>
+        </div>
+        <button id="btnCloseLightbox" type="button" title="Cerrar vista ampliada" class="p-2 rounded-xl bg-stone-100 text-slate-600 hover:bg-stone-200 active:scale-95 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="bg-stone-100 p-3 sm:p-4 flex items-center justify-center">
+        <img id="lightboxImg" src="" alt="Referencia de estilo" class="w-full max-h-[60vh] object-contain rounded-2xl shadow-sm" />
+      </div>
+      <div class="px-5 py-3 bg-stone-50 border-t border-stone-100">
+        <p id="lightboxDesc" class="text-xs text-slate-600 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Logos e Iconos SVG -->
+  <script src="./logos/iconos-svg.js"></script>
+
+  <!-- 2. Scripts de Configuración y Prompts Separados -->
+  <script src="./prompts/prompts-personaje.js"></script>
+  <script src="./prompts/prompts-emocion-postura.js"></script>
+  <script src="./prompts/prompts-escenario-camara-luz.js"></script>
+  <script src="./prompts/prompts-estilos.js"></script>
+  <script src="./prompts/prompt-principal.js"></script>
+
+  <!-- 3. Modelos 3D (Three.js) -->
+  <script src="./modelos/modelo-persona.js"></script>
+  <script src="./modelos/modelo-animal-antropomorfo.js"></script>
+  <script src="./modelos/modelo-animales.js"></script>
+  <script src="./modelos/modelo-objeto.js"></script>
+  <script src="./modelos/modelos3d.js"></script>
+
+  <!-- 4. Lógica Principal de Interfaz y Estado -->
+  <script src="./script.js"></script>
+</body>
+</html>

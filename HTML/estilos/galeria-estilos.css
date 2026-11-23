@@ -1,0 +1,28 @@
+/* ==========================================================================
+   3. Galería de Cuadrados de Estilos Visuales (Paso 7) y Vista Previa
+   ========================================================================== */
+
+#styleSquaresGrid .style-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.18s ease,
+              border-color 0.18s ease;
+}
+
+#styleSquaresGrid .style-card:hover {
+  z-index: 10;
+}
+
+/* Tooltip flotante opcional al pasar el cursor por cada cuadrado de estilo */
+.style-square-tooltip {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.style-card:hover .style-square-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}

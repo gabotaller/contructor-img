@@ -1,0 +1,353 @@
+/* ==========================================================================
+   2. Componentes Interactivos: Micrófono, Paletas de Color, Desplegables con
+      Imágenes (Iluminación) y Globos de Conversación en Vivo (Paso 8)
+   ========================================================================== */
+
+/* Dictado por voz activo */
+.mic-active {
+  background-color: #E11D48 !important;
+  color: #FFFFFF !important;
+  border-color: #E11D48 !important;
+  animation: pulseMic 1s infinite;
+}
+
+@keyframes pulseMic {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(225, 29, 72, 0);
+  }
+}
+
+/* Nodos arrastrables y Pad 2D de posición */
+.drag-node,
+.pos-pad-box {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Selector circular de color nativo */
+.color-circle-wrap {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 2px solid #CBD5E1;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.18), 0 1px 2px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.color-circle-wrap:hover {
+  transform: scale(1.08);
+  border-color: #4F46E5;
+}
+
+.color-circle-input {
+  position: absolute;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* Bolitas de color (Swatches) y Tooltips de código HEX */
+.swatch-dot {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 2px solid rgba(15, 23, 42, 0.16);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.swatch-dot:hover {
+  transform: scale(1.16);
+  z-index: 20;
+}
+
+.swatch-dot.is-active {
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #4F46E5;
+  transform: scale(1.08);
+}
+
+.swatch-tooltip {
+  pointer-events: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  opacity: 0;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  white-space: nowrap;
+  z-index: 40;
+}
+
+.swatch-wrap:hover .swatch-tooltip,
+.swatch-wrap:focus-within .swatch-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* --- Desplegables con Imágenes (Paso 6 · Iluminación) --- */
+.img-dd-panel {
+  animation: fadeSlideDown 0.16s ease-out;
+}
+
+@keyframes fadeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Globos de Conversación y Contenedores de Texto en el Visor 3D --- */
+.bubble-speech {
+  position: relative;
+  border-radius: 18px !important;
+  padding: 6px 13px !important;
+}
+
+.bubble-speech::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 24%;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid currentColor;
+  filter: drop-shadow(0 1px 0 rgba(15, 23, 42, 0.25));
+}
+
+.bubble-speech.tail-right::after {
+  left: auto;
+  right: 24%;
+}
+
+.bubble-speech.tail-top::after {
+  bottom: auto;
+  top: -9px;
+  border-top: none;
+  border-bottom: 10px solid currentColor;
+}
+
+.bubble-speech.tail-none::after {
+  display: none;
+}
+
+.bubble-thought {
+  position: relative;
+  border-radius: 9999px !important;
+  padding: 7px 15px !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.bubble-thought::before,
+.bubble-thought::after {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  border: 2px solid #334155;
+}
+
+.bubble-thought::before {
+  width: 9px;
+  height: 9px;
+  bottom: -10px;
+  left: 24%;
+}
+
+.bubble-thought::after {
+  width: 5px;
+  height: 5px;
+  bottom: -17px;
+  left: 18%;
+}
+
+.bubble-thought.tail-right::before { left: auto; right: 24%; }
+.bubble-thought.tail-right::after { left: auto; right: 18%; }
+.bubble-thought.tail-top::before { bottom: auto; top: -10px; }
+.bubble-thought.tail-top::after { bottom: auto; top: -17px; }
+.bubble-thought.tail-none::before,
+.bubble-thought.tail-none::after { display: none; }
+
+.bubble-shout {
+  position: relative;
+  border-radius: 6px !important;
+  padding: 7px 14px !important;
+  clip-path: polygon(
+    0% 15%, 10% 0%, 24% 12%, 38% 0%, 52% 11%, 66% 0%, 80% 12%, 92% 0%,
+    100% 18%, 94% 48%, 100% 82%, 88% 100%, 74% 88%, 58% 100%, 44% 89%,
+    28% 100%, 14% 88%, 0% 100%, 6% 52%
+  );
+}
+
+.bubble-whisper {
+  position: relative;
+  border-radius: 18px !important;
+  border-style: dashed !important;
+  padding: 6px 13px !important;
+}
+
+.bubble-banner {
+  position: relative;
+  border-radius: 4px !important;
+  padding: 5px 16px !important;
+  clip-path: polygon(0 0, 100% 0, 94% 50%, 100% 100%, 0 100%, 6% 50%);
+}
+
+.bubble-wood {
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #92400E 0%, #78350F 100%) !important;
+  color: #FEF3C7 !important;
+  border-color: #451A03 !important;
+  padding: 6px 14px !important;
+  box-shadow: 0 4px 10px rgba(69, 26, 3, 0.35);
+}
+
+.bubble-narrator {
+  border-radius: 4px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: #F8FAFC !important;
+  border-color: #F59E0B !important;
+  padding: 6px 14px !important;
+}
+
+.bubble-free {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95), 0 0 10px rgba(255, 255, 255, 0.95);
+}
+
+/* --- Efectos Visuales en Vivo sobre Imagen Real (Paso 6 · Iluminación y Atmósfera) --- */
+@keyframes lpRainFall {
+  0% { background-position: 0 0, 20px -40px; }
+  100% { background-position: -32px 180px, -12px 140px; }
+}
+
+@keyframes lpSnowFall {
+  0% { transform: translateY(-10%) translateX(0); }
+  50% { transform: translateY(50%) translateX(8px); }
+  100% { transform: translateY(115%) translateX(-4px); }
+}
+
+@keyframes lpFloatMote {
+  0%, 100% { transform: translate(0, 0) scale(0.9); opacity: 0.35; }
+  50% { transform: translate(12px, -16px) scale(1.25); opacity: 0.95; }
+}
+
+@keyframes lpLeafDrift {
+  0% { transform: translate(-15%, -15%) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.92; }
+  85% { opacity: 0.92; }
+  100% { transform: translate(115%, 85%) rotate(220deg); opacity: 0; }
+}
+
+@keyframes lpCandleFlicker {
+  0%, 100% { opacity: 0.85; }
+  25% { opacity: 0.98; }
+  50% { opacity: 0.78; }
+  75% { opacity: 0.94; }
+}
+
+@keyframes lpLightningFlash {
+  0%, 84%, 90%, 94%, 100% { opacity: 0; }
+  86% { opacity: 0.72; }
+  92% { opacity: 0.45; }
+}
+
+@keyframes lpAuroraWave {
+  0%, 100% { transform: translateX(-6%) skewX(-8deg) scaleY(1); opacity: 0.62; }
+  50% { transform: translateX(6%) skewX(8deg) scaleY(1.12); opacity: 0.85; }
+}
+
+@keyframes lpFogDrift {
+  0%, 100% { transform: translateX(-4%); }
+  50% { transform: translateX(4%); }
+}
+
+.lp-rain-layer {
+  position: absolute;
+  inset: -20px;
+  background-image:
+    repeating-linear-gradient(104deg, rgba(224, 242, 254, 0.55) 0px, rgba(224, 242, 254, 0.55) 1.5px, transparent 1.5px, transparent 18px),
+    repeating-linear-gradient(104deg, rgba(255, 255, 255, 0.35) 0px, rgba(255, 255, 255, 0.35) 1px, transparent 1px, transparent 27px);
+  background-size: 120px 180px, 160px 180px;
+  animation: lpRainFall 0.65s linear infinite;
+  opacity: 0.72;
+}
+
+.lp-rain-layer.is-storm {
+  animation-duration: 0.42s;
+  opacity: 0.92;
+}
+
+.lp-lightning-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 15%, rgba(224, 242, 254, 0.95), rgba(147, 197, 253, 0.45) 45%, transparent 80%);
+  mix-blend-mode: screen;
+  animation: lpLightningFlash 4.2s infinite;
+}
+
+.lp-candle-pulse {
+  animation: lpCandleFlicker 1.9s ease-in-out infinite;
+}
+
+.lp-aurora-band {
+  position: absolute;
+  top: -12%;
+  left: -15%;
+  right: -15%;
+  height: 62%;
+  background: linear-gradient(115deg, transparent 10%, rgba(16, 185, 129, 0.55) 32%, rgba(56, 189, 248, 0.5) 52%, rgba(168, 85, 247, 0.48) 72%, transparent 92%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  animation: lpAuroraWave 5.5s ease-in-out infinite;
+}
+
+.lp-fog-sheet {
+  position: absolute;
+  inset: 0 -10%;
+  background: linear-gradient(to top, rgba(241, 245, 249, 0.75) 0%, rgba(226, 232, 240, 0.42) 48%, rgba(248, 250, 252, 0.14) 100%);
+  animation: lpFogDrift 7s ease-in-out infinite;
+}
+
+.lp-snow-flake {
+  position: absolute;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  animation: lpSnowFall linear infinite;
+}
+
+.lp-mote {
+  position: absolute;
+  border-radius: 9999px;
+  animation: lpFloatMote ease-in-out infinite;
+}
+
+.lp-leaf {
+  position: absolute;
+  border-radius: 75% 15% 75% 15%;
+  animation: lpLeafDrift linear infinite;
+}
+

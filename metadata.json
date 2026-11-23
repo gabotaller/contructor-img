@@ -1,0 +1,6 @@
+{
+  "name": "Reloj Digital Minimalista",
+  "description": "Reloj digital simple y minimalista que muestra la hora actual sobre una pantalla en blanco.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
